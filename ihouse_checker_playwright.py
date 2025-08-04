@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 import requests
 import os
 import time
-import schedule
 
 # Get environment variables
 USERNAME = os.getenv("IHOUSE_USERNAME")
@@ -17,6 +16,7 @@ WAITLIST_URL = "https://ihnyc.starrezhousing.com/StarRezPortalX/C80683C9/25/750/
 
 room_found = False  # Global flag to avoid repeated spam
 
+
 def send_telegram(message):
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     data = {"chat_id": TELEGRAM_CHAT_ID, "text": message}
@@ -24,6 +24,7 @@ def send_telegram(message):
         requests.post(url, data=data)
     except Exception as e:
         print("❗ Telegram error:", e)
+
 
 async def spam_alerts():
     messages = [
@@ -37,6 +38,7 @@ async def spam_alerts():
         for msg in messages:
             send_telegram(msg)
             await asyncio.sleep(2)
+
 
 async def check_availability():
     global room_found
@@ -55,23 +57,23 @@ async def check_availability():
             await page.click('button:has-text("Login")')
             await page.wait_for_url("**/Home-Welcome_to_the_I_Hou**", timeout=15000)
 
-            # Navigate to waitlist page
+            # Go to waitlist page
             await page.goto(WAITLIST_URL)
             await page.wait_for_load_state("networkidle")
             content = await page.content()
             soup = BeautifulSoup(content, "html.parser")
 
-            # Check for no-room block
+            # Check room availability
             no_rooms_block = soup.find("div", class_="alert-nonefound alert")
             if no_rooms_block and "We couldn't find any available rooms" in no_rooms_block.text:
                 print("❌ No rooms available.")
-                room_found = False  # Reset if previously found
+                room_found = False  # Reset
             else:
                 if not room_found:
                     print("✅ Rooms might be available!")
                     room_found = True
                     asyncio.create_task(spam_alerts())
-            print("⏱️ Still running, checked at", time.strftime("%Y-%m-%d %H:%M:%S"))
+
             await browser.close()
 
     except Exception as e:
@@ -79,17 +81,24 @@ async def check_availability():
         print(error_msg)
         send_telegram(error_msg)
 
-def run_bot():
-    asyncio.run(check_availability())
 
-if __name__ == "__main__":
-    print("🤖 Bot deployed and running using Playwright...")
+async def heartbeat():
+    while True:
+        now = time.strftime("%Y-%m-%d %H:%M:%S")
+        send_telegram(f"⏱️ Still checking for rooms... ({now})")
+        await asyncio.sleep(600)  # 10 minutes
+
+
+async def main_loop():
     send_telegram("🤖 I-House room checker bot deployed and running!")
+    print("🤖 Bot deployed and running using Playwright...")
 
-    # Check once now, then every 5 minutes
-    run_bot()
-    schedule.every(5).minutes.do(run_bot)
+    asyncio.create_task(heartbeat())  # Start heartbeat loop
 
     while True:
-        schedule.run_pending()
-        time.sleep(1)
+        await check_availability()
+        await asyncio.sleep(300)  # wait 5 mins before next check
+
+
+if __name__ == "__main__":
+    asyncio.run(main_loop())
