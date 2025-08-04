@@ -1,0 +1,12 @@
+{
+  "name": "ihouse-checker",
+  "version": "1.0.0",
+  "description": "Room availability checker for I-House NYC using Playwright",
+  "main": "ihouse_checker.py",
+  "scripts": {
+    "postinstall": "playwright install --with-deps"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}
