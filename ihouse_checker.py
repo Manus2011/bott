@@ -40,6 +40,8 @@ def login_and_check():
     else:
         print("❌ No rooms available.")
 
+send_telegram("✅ Bot deployed and running!")
+
 while True:
     try:
         login_and_check()
