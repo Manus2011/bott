@@ -1,3 +1,3 @@
 #!/bin/bash
 playwright install --with-deps
-python ihouse_checker_playwright.py
+python3 ihouse_checker_playwright.py
