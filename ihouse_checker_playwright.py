@@ -14,9 +14,8 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 LOGIN_URL = "https://ihnyc.starrezhousing.com/StarRezPortalX/Login"
 WAITLIST_URL = "https://ihnyc.starrezhousing.com/StarRezPortalX/C80683C9/25/750/Waitlist-Initial_Selection?UrlToken=2002B365&TermID=103&DateStart=Monday%2C%20September%201%2C%202025&DateEnd=Thursday%2C%20January%201%2C%202026"
-async def main():
-    send_telegram("🛠 Debug: Bot started")  # Add this line to verify
-    await check_ihouse()
+
+room_found = False  # Global flag to avoid repeated spam
 
 def send_telegram(message):
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
@@ -26,8 +25,23 @@ def send_telegram(message):
     except Exception as e:
         print("❗ Telegram error:", e)
 
+async def spam_alerts():
+    messages = [
+        "🚨 ROOM AVAILABLE! CHECK NOW!",
+        "📢 WAKE UP BRO!",
+        "✅ ROOM FOUND!",
+        "💥 I-HOUSE ROOM IS OPEN!",
+        "🔔 RUN TO THE PORTAL!"
+    ]
+    while room_found:
+        for msg in messages:
+            send_telegram(msg)
+            await asyncio.sleep(2)
+
 async def check_availability():
+    global room_found
     print("🔍 Checking room availability...")
+
     try:
         async with async_playwright() as p:
             browser = await p.chromium.launch(headless=True)
@@ -39,25 +53,24 @@ async def check_availability():
             await page.fill('input[name="Username"]', USERNAME)
             await page.fill('input[name="Password"]', PASSWORD)
             await page.click('button:has-text("Login")')
-
-            # Wait for redirect
             await page.wait_for_url("**/Home-Welcome_to_the_I_Hou**", timeout=15000)
 
             # Navigate to waitlist page
             await page.goto(WAITLIST_URL)
             await page.wait_for_load_state("networkidle")
-
             content = await page.content()
             soup = BeautifulSoup(content, "html.parser")
 
-            # Look for "no rooms" message
+            # Check for no-room block
             no_rooms_block = soup.find("div", class_="alert-nonefound alert")
             if no_rooms_block and "We couldn't find any available rooms" in no_rooms_block.text:
                 print("❌ No rooms available.")
-                send_telegram("❌ No rooms available.")
+                room_found = False  # Reset if previously found
             else:
-                print("✅ Rooms might be available!")
-                send_telegram("✅ Rooms might be available! Go check now!")
+                if not room_found:
+                    print("✅ Rooms might be available!")
+                    room_found = True
+                    asyncio.create_task(spam_alerts())
 
             await browser.close()
 
@@ -73,7 +86,7 @@ if __name__ == "__main__":
     print("🤖 Bot deployed and running using Playwright...")
     send_telegram("🤖 I-House room checker bot deployed and running!")
 
-    # Check once immediately, then every 5 mins
+    # Check once now, then every 5 minutes
     run_bot()
     schedule.every(5).minutes.do(run_bot)
 
