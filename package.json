@@ -1,8 +1,8 @@
 {
-  "build": {
-    "env": {
-      "PLAYWRIGHT_BROWSERS_PATH": "0"
-    },
-    "postInstall": "playwright install --with-deps"
+  "name": "ihouse-checker",
+  "version": "1.0.0",
+  "description": "Telegram bot for checking I-House room availability",
+  "scripts": {
+    "postinstall": "playwright install --with-deps"
   }
 }
