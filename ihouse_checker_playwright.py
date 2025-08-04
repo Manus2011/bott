@@ -14,6 +14,9 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 LOGIN_URL = "https://ihnyc.starrezhousing.com/StarRezPortalX/Login"
 WAITLIST_URL = "https://ihnyc.starrezhousing.com/StarRezPortalX/C80683C9/25/750/Waitlist-Initial_Selection?UrlToken=2002B365&TermID=103&DateStart=Monday%2C%20September%201%2C%202025&DateEnd=Thursday%2C%20January%201%2C%202026"
+async def main():
+    send_telegram("🛠 Debug: Bot started")  # Add this line to verify
+    await check_ihouse()
 
 def send_telegram(message):
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
