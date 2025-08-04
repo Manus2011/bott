@@ -1,8 +1,13 @@
 {
-  "name": "ihouse-checker",
+  "name": "ihouse-waitlist-bot",
   "version": "1.0.0",
-  "description": "Telegram bot for checking I-House room availability",
+  "description": "Telegram bot to monitor I-House NYC waitlist availability",
+  "main": "ihouse_checker_playwright.py",
   "scripts": {
-    "postinstall": "playwright install --with-deps"
-  }
+    "postinstall": "playwright install",
+    "start": "python3 ihouse_checker_playwright.py"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
 }
