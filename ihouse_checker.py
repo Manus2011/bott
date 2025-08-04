@@ -13,13 +13,17 @@ CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 LOGIN_URL = "https://ihnyc.starrezhousing.com/StarRezPortalX/Login?returnUrl=%2FStarRezPortalX%2F470CAB25%2F1%2F1%2FHome-Welcome_to_the_I_Hou%3FUrlToken%3D5392BC13"
 WAITLIST_URL = "https://ihnyc.starrezhousing.com/StarRezPortalX/3FB6D5B6/25/750/Waitlist-Initial_Selection?UrlToken=5392BC13&TermID=103&DateStart=Monday%2C%20September%201%2C%202025&DateEnd=Thursday%2C%20January%201%2C%202026"
 
-
+options = uc.ChromeOptions()
+options.add_argument('--headless')
+options.add_argument('--no-sandbox')
+options.add_argument('--disable-dev-shm-usage')
+options.binary_location = '/usr/bin/chromium-browser'  # for Railway
 
 def send_telegram(msg):
     requests.get(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage", params={"chat_id": CHAT_ID, "text": msg})
 
 def login_and_check():
-    driver = uc.Chrome(headless=True)
+    driver = uc.Chrome(options=options)
     driver.get(LOGIN_URL)
     time.sleep(3)
     driver.find_element(By.ID, "username").send_keys(USERNAME)
@@ -36,11 +40,12 @@ def login_and_check():
     else:
         print("❌ No rooms available.")
 
-send_telegram("✅ Bot deployed and running!")
+# 👇 Send startup message
+send_telegram("🚀 Bot deployed and running.")
 
 while True:
     try:
         login_and_check()
     except Exception as e:
         send_telegram(f"❗ Bot error: {e}")
-    time.sleep(300)  # 5 minutes
+    time.sleep(300)
