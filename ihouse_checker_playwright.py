@@ -71,7 +71,7 @@ async def check_availability():
                     print("✅ Rooms might be available!")
                     room_found = True
                     asyncio.create_task(spam_alerts())
-
+            print("⏱️ Still running, checked at", time.strftime("%Y-%m-%d %H:%M:%S"))
             await browser.close()
 
     except Exception as e:
