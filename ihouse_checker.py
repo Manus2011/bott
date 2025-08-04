@@ -1,8 +1,7 @@
 import os
 import time
 import requests
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 
 # Load credentials from environment
@@ -14,16 +13,13 @@ CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 LOGIN_URL = "https://ihnyc.starrezhousing.com/StarRezPortalX/Login?returnUrl=%2FStarRezPortalX%2F470CAB25%2F1%2F1%2FHome-Welcome_to_the_I_Hou%3FUrlToken%3D5392BC13"
 WAITLIST_URL = "https://ihnyc.starrezhousing.com/StarRezPortalX/3FB6D5B6/25/750/Waitlist-Initial_Selection?UrlToken=5392BC13&TermID=103&DateStart=Monday%2C%20September%201%2C%202025&DateEnd=Thursday%2C%20January%201%2C%202026"
 
-chrome_options = Options()
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--disable-dev-shm-usage")
+
 
 def send_telegram(msg):
     requests.get(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage", params={"chat_id": CHAT_ID, "text": msg})
 
 def login_and_check():
-    driver = webdriver.Chrome(options=chrome_options)
+    driver = uc.Chrome(headless=True)
     driver.get(LOGIN_URL)
     time.sleep(3)
     driver.find_element(By.ID, "username").send_keys(USERNAME)
