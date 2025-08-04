@@ -1,13 +1,9 @@
 {
-  "name": "ihouse-waitlist-bot",
-  "version": "1.0.0",
-  "description": "Telegram bot to monitor I-House NYC waitlist availability",
-  "main": "ihouse_checker_playwright.py",
-  "scripts": {
-    "postinstall": "playwright install",
-    "start": "python3 ihouse_checker_playwright.py"
+  "build": {
+    "env": {
+      "PLAYWRIGHT_BROWSERS_PATH": "/root/.cache/ms-playwright"
+    },
+    "postInstall": "playwright install chromium && playwright install-deps"
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT"
+  "start": "python3 ihouse_checker_playwright.py"
 }
