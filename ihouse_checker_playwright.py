@@ -86,7 +86,7 @@ async def heartbeat():
     while True:
         now = time.strftime("%Y-%m-%d %H:%M:%S")
         send_telegram(f"⏱️ Still checking for rooms... ({now})")
-        await asyncio.sleep(6000)  # 10 minutes
+        await asyncio.sleep(1800)  # 10 minutes
 
 async def main_loop():
     send_telegram("🤖 I-House room checker bot deployed and running!")
