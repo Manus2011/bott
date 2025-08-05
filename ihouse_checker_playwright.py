@@ -96,7 +96,7 @@ async def main_loop():
 
     while True:
         await check_availability()
-        await asyncio.sleep(240)  # wait 5 mins before next check
+        await asyncio.sleep(180)  # wait 5 mins before next check
 
 
 if __name__ == "__main__":
