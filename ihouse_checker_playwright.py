@@ -60,8 +60,6 @@ async def check_availability():
             # Go to waitlist page
             await page.goto(WAITLIST_URL)
             await page.wait_for_load_state("networkidle")
-            await page.screenshot(path="waitlist_page.png", full_page=True)
-            send_telegram_photo("waitlist_page.png")
             content = await page.content()
             soup = BeautifulSoup(content, "html.parser")
 
@@ -88,17 +86,7 @@ async def heartbeat():
     while True:
         now = time.strftime("%Y-%m-%d %H:%M:%S")
         send_telegram(f"⏱️ Still checking for rooms... ({now})")
-        await asyncio.sleep(600)  # 10 minutes
-
-def send_telegram_photo(image_path):
-    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendPhoto"
-    with open(image_path, 'rb') as photo:
-        files = {"photo": photo}
-        data = {"chat_id": TELEGRAM_CHAT_ID}
-        try:
-            requests.post(url, files=files, data=data)
-        except Exception as e:
-            print("❗ Telegram image error:", e)
+        await asyncio.sleep(6000)  # 10 minutes
 
 async def main_loop():
     send_telegram("🤖 I-House room checker bot deployed and running!")
@@ -108,7 +96,7 @@ async def main_loop():
 
     while True:
         await check_availability()
-        await asyncio.sleep(300)  # wait 5 mins before next check
+        await asyncio.sleep(240)  # wait 5 mins before next check
 
 
 if __name__ == "__main__":
