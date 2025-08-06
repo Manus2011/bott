@@ -84,6 +84,7 @@ async def check_availability():
 async def heartbeat():
     while True:
         now = time.strftime("%Y-%m-%d %H:%M:%S")
+        send_telegram(f"⏱️ Still checking for rooms... ({now})")
         await asyncio.sleep(1800)
 
 async def main_loop():
