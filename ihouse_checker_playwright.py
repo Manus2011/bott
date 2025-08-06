@@ -82,11 +82,6 @@ async def check_availability():
         send_telegram(error_msg)
 
 
-async def heartbeat():
-    while True:
-        now = time.strftime("%Y-%m-%d %H:%M:%S")
-        send_telegram(f"⏱️ Still checking for rooms... ({now})")
-        await asyncio.sleep(1800)  # 10 minutes
 
 async def main_loop():
     send_telegram("🤖 I-House room checker bot deployed and running!")
@@ -96,7 +91,7 @@ async def main_loop():
 
     while True:
         await check_availability()
-        await asyncio.sleep(180)  # wait 5 mins before next check
+        await asyncio.sleep(180)  
 
 
 if __name__ == "__main__":
