@@ -80,8 +80,11 @@ async def check_availability():
         error_msg = f"❗ Bot error: {str(e)}"
         print(error_msg)
         send_telegram(error_msg)
-
-
+        
+async def heartbeat():
+    while True:
+        now = time.strftime("%Y-%m-%d %H:%M:%S")
+        await asyncio.sleep(1800)
 
 async def main_loop():
     send_telegram("🤖 I-House room checker bot deployed and running!")
